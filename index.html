@@ -1,64 +1,88 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Simple Map</title>
-    <meta name="viewport" content="initial-scale=1.0">
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="css/styles.css">
-  </head>
-  <body>
-    <div id="map">hello</div>
-    <script>
-      var map;
+
+<head>
+  <title>Simple Map</title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QUzTDzZ_YrQfQ5SD2DPB-dJOV7bzVsQ&callback=initMap" async defer></script>
+  <script src="./data/carpark2.json"></script>
+  <script src="./distanceCalculator.js"></script>
+
+</head>
+
+<body>
+  <div id="map">hello</div>
+  <script>
+
+    var map;
+    var myPosition;
+    var listOfAllCarparks = carparkJSON;
 
 
-
-
-
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 15
-        });
-
-        navigator.geolocation.getCurrentPosition(function(position) {
-          let pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          }
-          map.setCenter(pos);
-
-          var icon = {
-            url: "images/car-placeholder.svg",
-            scaledSize: new google.maps.Size(40, 50),
-          };
-
-          var carparkMarker = new google.maps.Marker({
-            position: {lat: 1.2984449, lng: 103.855068},
-            map: map,
-            icon: icon
-          });
-
-          carparkMarker.addListener("click", function() {
-            map.setCenter(carparkMarker.position);
-          });
-
-          var currentPosMarker = new google.maps.Marker({
-            position: pos,
-            map: map
-          });
-        });
-
-
-
+    navigator.geolocation.getCurrentPosition(function(position) {
+      myPosition = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
       }
 
+      var listOfNearestCarParks = findNearestCarparks(myPosition, listOfAllCarparks);
+      console.log(listOfAllCarparks);
+      initMap();
+    });
 
+    // Main function
+    function initMap() { //creates a map object
+      map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 15,
+        zoomControl: false
+      });
 
+      map.setCenter(myPosition);
 
+      // Sets marker of current position
+      currentPositionMarker = new google.maps.Marker({
+        position: myPosition,
+        map: map
+      });
 
+      // Creates a carpark icon
+      var icon = {
+        url: "images/car-placeholder.svg",
+        scaledSize: new google.maps.Size(40, 50),
+      };
 
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QUzTDzZ_YrQfQ5SD2DPB-dJOV7bzVsQ&callback=initMap"
-    async defer></script>
-  </body>
+      // Creates a carpark marker on the map
+      var carparkMarker = new google.maps.Marker({
+        position: {
+          lat: 1.2984449,
+          lng: 103.855068
+        },
+        map: map,
+        icon: icon
+      });
+      // Centers map to carpark marker when carpark marker is clicked
+      carparkMarker.addListener("click", function() {
+        map.setCenter(carparkMarker.position);
+        map.setZoom(15);
+      });
+
+      console.log(listOfNearestCarParks);
+
+      listOfNearestCarParks.forEach(function(carpark) {
+        let carparkMarkerNew = new google.maps.Marker({
+          position: {
+            lat: carpark.lat,
+            lng: carpark.lng
+          },
+          map: map,
+          icon: icon
+        });
+      });
+    }
+  </script>
+</body>
+
 </html>
