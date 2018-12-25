@@ -7,9 +7,11 @@
     <link rel="stylesheet" href="css/styles.css">
   </head>
   <body>
-    <div id="map"></div>
+    <div id="map">hello</div>
     <script>
       var map;
+
+
 
 
 
@@ -25,11 +27,20 @@
           }
           map.setCenter(pos);
 
-          var image = 'images/carpark.png';
-          var beachMarker = new google.maps.Marker({
+          var icon = {
+            url: "images/car-placeholder.svg",
+            scaledSize: new google.maps.Size(40, 50),
+          };
+
+          // var carparkMarker = new google.maps.Marker({
+          //   position: pos,
+          //   map: map,
+          //   icon: icon
+          // });
+
+          var currentPosMarker = new google.maps.Marker({
             position: pos,
-            map: map,
-            icon: image
+            map: map
           });
         });
 
